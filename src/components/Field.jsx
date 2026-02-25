@@ -1,15 +1,17 @@
-const Field = () => {
+const Field = ({ className = '', id, label, type = 'text', onSearchInput }) => {
   return (
     <>
-      <div className="todo__field field">
-        <label className="field__label" htmlFor="new-task">
-          New task
+      <div className={`field ${className}`}>
+        <label className="field__label" htmlFor={id}>
+          {label}
         </label>
         <input
+          type={type}
           className="field__input"
-          id="new-task"
+          id={id}
           placeholder=" "
           autoComplete="off"
+          onInput={({ target }) => onSearchInput(target.value)}
         />
       </div>
     </>

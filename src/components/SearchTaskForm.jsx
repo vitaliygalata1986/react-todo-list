@@ -1,18 +1,15 @@
-const SearchTaskForm = () => {
+import Field from './Field';
+
+const SearchTaskForm = ({ onSearchInput }) => {
   return (
-    <form className="todo__form">
-      <div className="todo__field field">
-        <label className="field__label" htmlFor="search-task">
-          Search task
-        </label>
-        <input
-          className="field__input"
-          id="search-task"
-          placeholder=" "
-          autoComplete="off"
-          type="search"
-        />
-      </div>
+    <form className="todo__form" onSubmit={(e) => e.preventDefault()}>
+      <Field
+        label="Search task"
+        id="search-task"
+        className="todo__field"
+        type="search"
+        onSearchInput={onSearchInput}
+      />
     </form>
   );
 };
