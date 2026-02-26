@@ -1,4 +1,11 @@
-const Field = ({ className = '', id, label, type = 'text', onSearchInput }) => {
+const Field = ({
+  className = '',
+  id,
+  label,
+  type = 'text',
+  value,
+  onInput,
+}) => {
   return (
     <>
       <div className={`field ${className}`}>
@@ -11,7 +18,8 @@ const Field = ({ className = '', id, label, type = 'text', onSearchInput }) => {
           id={id}
           placeholder=" "
           autoComplete="off"
-          onInput={({ target }) => onSearchInput(target.value)}
+          value={value}
+          onInput={onInput}
         />
       </div>
     </>
