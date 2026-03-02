@@ -1,7 +1,12 @@
 import Field from './Field';
 import Button from './Button';
 
-const AddTaskForm = ({ addTask, newTaskTitle, setNewTaskTitle }) => {
+const AddTaskForm = ({
+  addTask,
+  newTaskInputRef,
+  newTaskTitle,
+  setNewTaskTitle,
+}) => {
   const onSubmit = (e) => {
     e.preventDefault();
     addTask();
@@ -9,11 +14,12 @@ const AddTaskForm = ({ addTask, newTaskTitle, setNewTaskTitle }) => {
   return (
     <form className="todo__form" onSubmit={onSubmit}>
       <Field
-        value={newTaskTitle}
+        // value={newTaskTitle}
         label="New task title"
         id="new-task"
         className="todo__field"
-        onInput={(event) => setNewTaskTitle(event.target.value)}
+        // onInput={(event) => setNewTaskTitle(event.target.value)}
+        ref={newTaskInputRef}
       />
       <Button type="submit">Add</Button>
     </form>

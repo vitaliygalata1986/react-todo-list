@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import AddTaskForm from './AddTaskForm';
 import SearchTaskForm from './SearchTaskForm';
@@ -26,7 +26,11 @@ const Todo = () => {
     ];
   });
 
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  // const [newTaskTitle, setNewTaskTitle] = useState('');
+
+  const newTaskInputRef = useRef(null);
+
+  // console.log('newTaskInputRef', newTaskInputRef); // {current: null} null мы указали в качестве начального значения в useRef(null)
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -54,16 +58,20 @@ const Todo = () => {
   };
 
   const addTask = () => {
+    const newTaskTitle = newTaskInputRef.current.value;
     if (newTaskTitle.trim().length > 0) {
       const newTask = {
-        id: crypto?.randomUUID() ?? Date.now().toString(), // crypto - всроенный объект в JS
+        id: crypto?.randomUUID() ?? Date.now().toString(), // crypto - встроенный объект в JS
         title: newTaskTitle,
         isDone: false,
       };
       setTasks([...tasks, newTask]);
-      setNewTaskTitle('');
+      // setNewTaskTitle('');
+      newTaskInputRef.current.value = '';
       setSearchQuery(''); // это нужно для того, чтобы когда мы 1 ввели что-то в поиск, а потом решили добавить новую задачу - то мы гарантированно увидели ее в списке
     }
+
+    // console.log('newTaskInputRef', newTaskInputRef); // {current: input#new-task.field__input} - тоесть в свойстве current храниться ссылка на DOM элемент и естественно в этом элементе есть value
   };
 
   // Этот useEffect выполнится после того, как компонент смонтировался и отрисовался в DOM.
@@ -76,6 +84,7 @@ const Todo = () => {
   }, [tasks]);
 
   const clearSearchQuery = searchQuery.trim().toLowerCase();
+
   const filteredTasks =
     clearSearchQuery.length > 0
       ? tasks.filter(({ title }) =>
@@ -88,8 +97,9 @@ const Todo = () => {
       <h1 className="todo__title">To Do List</h1>
       <AddTaskForm
         addTask={addTask}
-        newTaskTitle={newTaskTitle}
-        setNewTaskTitle={setNewTaskTitle}
+        newTaskInputRef={newTaskInputRef}
+        // newTaskTitle={newTaskTitle}
+        // setNewTaskTitle={setNewTaskTitle}
       />
       <SearchTaskForm
         searchQuery={searchQuery}
