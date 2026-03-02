@@ -5,11 +5,12 @@ const TodoList = ({
   filteredTasks,
   onDeleteTaskButtonClick,
   onToggleTaskCompleteChange,
+  firstIncompleteTaskRef,
+  firstIncompletedTaskId,
 }) => {
-
   const hasTatsks = tasks.length > 0;
   const isEmptyFilteredTasks = filteredTasks?.length === 0;
-  
+
   if (!hasTatsks) {
     return <div className="todo__empty-message">There are no tasks yet</div>;
   }
@@ -23,6 +24,9 @@ const TodoList = ({
       {(filteredTasks ?? tasks).map((task) => (
         <TodoItem
           key={task.id}
+          ref={
+            task.id === firstIncompletedTaskId ? firstIncompleteTaskRef : null
+          }
           onDeleteTaskButtonClick={onDeleteTaskButtonClick}
           onToggleTaskCompleteChange={onToggleTaskCompleteChange}
           {...task}
@@ -33,3 +37,10 @@ const TodoList = ({
 };
 
 export default TodoList;
+
+/*
+   ref={
+         task.id === firstIncompletedTaskId ? firstIncompleteTaskRef : null
+       } 
+   если id перебираемой задачи совпало с firstIncompletedTaskId, то в ref запишем firstIncompleteTaskRef 
+*/

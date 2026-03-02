@@ -14,11 +14,11 @@ const AddTaskForm = ({
   return (
     <form className="todo__form" onSubmit={onSubmit}>
       <Field
-        // value={newTaskTitle}
+        value={newTaskTitle}
         label="New task title"
         id="new-task"
         className="todo__field"
-        // onInput={(event) => setNewTaskTitle(event.target.value)}
+        onInput={(event) => setNewTaskTitle(event.target.value)}
         ref={newTaskInputRef}
       />
       <Button type="submit">Add</Button>

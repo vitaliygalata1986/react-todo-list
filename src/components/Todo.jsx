@@ -4,6 +4,7 @@ import AddTaskForm from './AddTaskForm';
 import SearchTaskForm from './SearchTaskForm';
 import TodoInfo from './TodoInfo';
 import TodoList from './TodoList';
+import Button from './Button';
 
 const Todo = () => {
   // 1 - этот нижний код выполняется до момента первого рендера
@@ -26,13 +27,17 @@ const Todo = () => {
     ];
   });
 
-  // const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const newTaskInputRef = useRef(null);
 
-  // console.log('newTaskInputRef', newTaskInputRef); // {current: null} null мы указали в качестве начального значения в useRef(null)
+  const firstIncompleteTaskRef = useRef(null);
 
-  const [searchQuery, setSearchQuery] = useState('');
+  const firstIncompletedTaskId = tasks.find(({ isDone }) => !isDone)?.id; // получим id первой не выполненной таски
+
+  // console.log('firstIncompletedTaskId', firstIncompletedTaskId);
 
   const deleteAllTasks = () => {
     const isConfirmed = confirm('Are you sure you want to delete all?');
@@ -58,7 +63,6 @@ const Todo = () => {
   };
 
   const addTask = () => {
-    const newTaskTitle = newTaskInputRef.current.value;
     if (newTaskTitle.trim().length > 0) {
       const newTask = {
         id: crypto?.randomUUID() ?? Date.now().toString(), // crypto - встроенный объект в JS
@@ -66,9 +70,9 @@ const Todo = () => {
         isDone: false,
       };
       setTasks([...tasks, newTask]);
-      // setNewTaskTitle('');
-      newTaskInputRef.current.value = '';
+      setNewTaskTitle('');
       setSearchQuery(''); // это нужно для того, чтобы когда мы 1 ввели что-то в поиск, а потом решили добавить новую задачу - то мы гарантированно увидели ее в списке
+      newTaskInputRef.current.focus();
     }
 
     // console.log('newTaskInputRef', newTaskInputRef); // {current: input#new-task.field__input} - тоесть в свойстве current храниться ссылка на DOM элемент и естественно в этом элементе есть value
@@ -76,12 +80,18 @@ const Todo = () => {
 
   // Этот useEffect выполнится после того, как компонент смонтировался и отрисовался в DOM.
   useEffect(() => {
+    /*
     console.log(
       'Сохраняем данные в LocalStorage так как изменился tasks',
       tasks,
     );
+    */
     localStorage.setItem('tasks', JSON.stringify(tasks)); // данные в localStorage можно хранить только в виде строк
   }, [tasks]);
+
+  useEffect(() => {
+    newTaskInputRef.current.focus(); // реакт сначала отрисует компонент, а только потом выполнит этот код
+  }, []);
 
   const clearSearchQuery = searchQuery.trim().toLowerCase();
 
@@ -98,8 +108,8 @@ const Todo = () => {
       <AddTaskForm
         addTask={addTask}
         newTaskInputRef={newTaskInputRef}
-        // newTaskTitle={newTaskTitle}
-        // setNewTaskTitle={setNewTaskTitle}
+        newTaskTitle={newTaskTitle}
+        setNewTaskTitle={setNewTaskTitle}
       />
       <SearchTaskForm
         searchQuery={searchQuery}
@@ -110,11 +120,23 @@ const Todo = () => {
         done={tasks.filter(({ isDone }) => isDone).length}
         onDeleteAllButtonClick={deleteAllTasks}
       />
+      <Button
+        onClick={() =>
+          firstIncompleteTaskRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        }
+      >
+        Show first incomplete task
+      </Button>
       <TodoList
         tasks={tasks}
         filteredTasks={filteredTasks}
         onDeleteTaskButtonClick={deleteTask}
         onToggleTaskCompleteChange={toggleTaskComplete}
+        firstIncompleteTaskRef={firstIncompleteTaskRef}
+        firstIncompletedTaskId={firstIncompletedTaskId}
       />
     </div>
   );
@@ -125,4 +147,22 @@ export default Todo;
 /*
   Важно: при ленивой инициализации useState(() => ...) tasks уже “правильный” (например 3 таска) на первом рендере, 
   поэтому этот useEffect после монтирования просто сохранит актуальные tasks, без мигания 2→3.
+*/
+
+/*
+  find() возвращает первый элемент массива, который подходит под условие, и сразу останавливается. То есть ты получишь id самой первой невыполненной задачи по порядку в массиве tasks (сверху списка), а не всех невыполненных.
+  Если все задачи выполнены, то find() вернёт undefined, и из-за ?.id результат тоже будет undefined.
+*/
+
+/*
+  firstIncompleteTaskRef.current?.scrollIntoView({ behavior: 'smooth' })
+    firstIncompleteTaskRef.current — ссылка на DOM-элемент первой невыполненной задачи.
+    ?. (optional chaining) — если current равен null/undefined (например, все задачи выполнены и ref никуда не привязан), ничего не произойдёт, ошибки не будет.
+    scrollIntoView(...) — прокрутит к этому элементу.
+    { behavior: 'smooth' } — делает прокрутку плавной, а не мгновенной.
+  Дополнительно: у scrollIntoView есть опции выравнивания:
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' }) // к верху
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' }) // в центр
+    el.scrollIntoView({ behavior: 'smooth', block: 'end' }) // к низу
+    el.scrollIntoView({ behavior: 'smooth', inline: 'nearest' }) // по горизонтали
 */
