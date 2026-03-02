@@ -93,6 +93,13 @@ const Todo = () => {
     newTaskInputRef.current.focus(); // реакт сначала отрисует компонент, а только потом выполнит этот код
   }, []);
 
+  const renderCount = useRef(0);
+
+  useEffect(() => {
+    renderCount.current++;
+    console.log(`Компонент Todo отрендерился ${renderCount.current} раз(а)`);
+  }); // нуЖно реагировать на каждый рендер, поэтому зависимость useEffect - пустая, и если мы будем что-то в инбудет вбивать, то счетчик будет увеличиваться, то не будет каждый раз перерендера DOM
+  // тоесть useRef помимо того, что может получать доступ к DOM элементу, так же моет хранить какое-то произвольное значение, которое не вызывает перерисовку компонента
   const clearSearchQuery = searchQuery.trim().toLowerCase();
 
   const filteredTasks =
