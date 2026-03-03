@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import TodoItem from './TodoItem';
 
 const TodoList = ({
@@ -8,6 +9,7 @@ const TodoList = ({
   firstIncompleteTaskRef,
   firstIncompletedTaskId,
 }) => {
+  console.log('TodoList');
   const hasTatsks = tasks.length > 0;
   const isEmptyFilteredTasks = filteredTasks?.length === 0;
 
@@ -36,7 +38,7 @@ const TodoList = ({
   );
 };
 
-export default TodoList;
+export default memo(TodoList);
 
 /*
    ref={
