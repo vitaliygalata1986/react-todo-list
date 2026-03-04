@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useContext } from 'react';
+import { TaskContext } from '../context/TasksContext';
 
 import AddTaskForm from './AddTaskForm';
 import SearchTaskForm from './SearchTaskForm';
@@ -7,144 +8,13 @@ import TodoList from './TodoList';
 import Button from './Button';
 
 const Todo = () => {
-  console.log('Todo');
-
-  // 1 - этот нижний код выполняется до момента первого рендера
-  const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    if (savedTasks) {
-      return JSON.parse(savedTasks);
-    }
-    return [
-      {
-        id: 1,
-        title: 'Task 1',
-        isDone: false,
-      },
-      {
-        id: 2,
-        title: 'Task 2',
-        isDone: true,
-      },
-    ];
-  });
-
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const newTaskInputRef = useRef(null);
-
-  const firstIncompleteTaskRef = useRef(null);
-
-  const firstIncompletedTaskId = tasks.find(({ isDone }) => !isDone)?.id; // получим id первой не выполненной таски
-
-  // console.log('firstIncompletedTaskId', firstIncompletedTaskId);
-
-  const deleteAllTasks = useCallback(() => {
-    const isConfirmed = confirm('Are you sure you want to delete all?');
-    if (isConfirmed) setTasks([]);
-  }, []);
-
-  const deleteTask = useCallback(
-    (taskId) => {
-      setTasks(tasks.filter((task) => task.id !== taskId)); // фильтр возвращает результат нового массива, а не мутирует исходный
-    },
-    [tasks],
-  );
-
-  const toggleTaskComplete = useCallback(
-    (taskId, isDone) => {
-      setTasks(
-        tasks.map((task) => {
-          if (task.id === taskId) {
-            return {
-              ...task,
-              isDone,
-            };
-          }
-          return task;
-        }),
-      );
-    },
-    [tasks],
-  );
-
-  const addTask = useCallback(() => {
-    if (newTaskTitle.trim().length > 0) {
-      const newTask = {
-        id: crypto?.randomUUID() ?? Date.now().toString(), // crypto - встроенный объект в JS
-        title: newTaskTitle,
-        isDone: false,
-      };
-      setTasks((prevTasks) => [...prevTasks, newTask]); // этим мы избавилсь от setTasks() - чтобы не пердавать в зависимость [tasks]
-      setNewTaskTitle('');
-      setSearchQuery(''); // это нужно для того, чтобы когда мы 1 ввели что-то в поиск, а потом решили добавить новую задачу - то мы гарантированно увидели ее в списке
-      newTaskInputRef.current.focus();
-    }
-
-    // console.log('newTaskInputRef', newTaskInputRef); // {current: input#new-task.field__input} - тоесть в свойстве current храниться ссылка на DOM элемент и естественно в этом элементе есть value
-  }, [newTaskTitle]);
-
-  // Этот useEffect выполнится после того, как компонент смонтировался и отрисовался в DOM.
-  useEffect(() => {
-    /*
-    console.log(
-      'Сохраняем данные в LocalStorage так как изменился tasks',
-      tasks,
-    );
-    */
-    localStorage.setItem('tasks', JSON.stringify(tasks)); // данные в localStorage можно хранить только в виде строк
-  }, [tasks]);
-
-  useEffect(() => {
-    newTaskInputRef.current.focus(); // реакт сначала отрисует компонент, а только потом выполнит этот код
-  }, []);
-
-  /*
-  const renderCount = useRef(0);
-
-  useEffect(() => {
-    renderCount.current++;
-    console.log(`Компонент Todo отрендерился ${renderCount.current} раз(а)`);
-  }); // нуЖно реагировать на каждый рендер, поэтому зависимость useEffect - пустая, и если мы будем что-то в инбудет вбивать, то счетчик будет увеличиваться, то не будет каждый раз перерендера DOM
-  // тоесть useRef помимо того, что может получать доступ к DOM элементу, так же моет хранить какое-то произвольное значение, которое не вызывает перерисовку компонента
-  */
-
-  const filteredTasks = useMemo(() => {
-    // хук useMemo запоминает результат вычислений, пока входные данные не изменились
-    const clearSearchQuery = searchQuery.trim().toLowerCase();
-    return clearSearchQuery.length > 0
-      ? tasks.filter(({ title }) =>
-          title.toLowerCase().includes(clearSearchQuery),
-        )
-      : null;
-  }, [searchQuery, tasks]); // сюда передаем те зависимости, от которых зависят вычисления
-
-  // теперь пересчет выполненных задач не будет выполняться заново
-  const doneTasks = useMemo(
-    () => tasks.filter(({ isDone }) => isDone).length,
-    [tasks],
-  );
-
+  const { firstIncompleteTaskRef } = useContext(TaskContext);
   return (
     <div className="todo">
       <h1 className="todo__title">To Do List</h1>
-      <AddTaskForm
-        addTask={addTask}
-        newTaskInputRef={newTaskInputRef}
-        newTaskTitle={newTaskTitle}
-        setNewTaskTitle={setNewTaskTitle}
-      />
-      <SearchTaskForm
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-      />
-      <TodoInfo
-        total={tasks.length}
-        done={doneTasks}
-        onDeleteAllButtonClick={deleteAllTasks}
-      />
+      <AddTaskForm />
+      <SearchTaskForm />
+      <TodoInfo />
       <Button
         onClick={() =>
           firstIncompleteTaskRef.current?.scrollIntoView({
@@ -155,14 +25,7 @@ const Todo = () => {
       >
         Show first incomplete task
       </Button>
-      <TodoList
-        tasks={tasks}
-        filteredTasks={filteredTasks}
-        onDeleteTaskButtonClick={deleteTask}
-        onToggleTaskCompleteChange={toggleTaskComplete}
-        firstIncompleteTaskRef={firstIncompleteTaskRef}
-        firstIncompletedTaskId={firstIncompletedTaskId}
-      />
+      <TodoList />
     </div>
   );
 };

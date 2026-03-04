@@ -1,15 +1,11 @@
 import { memo } from 'react';
+import { useContext } from 'react';
+import { TaskContext } from '../context/TasksContext';
 import TodoItem from './TodoItem';
 
-const TodoList = ({
-  tasks = [],
-  filteredTasks,
-  onDeleteTaskButtonClick,
-  onToggleTaskCompleteChange,
-  firstIncompleteTaskRef,
-  firstIncompletedTaskId,
-}) => {
-  console.log('TodoList');
+const TodoList = () => {
+  const { tasks, filteredTasks } = useContext(TaskContext);
+
   const hasTatsks = tasks.length > 0;
   const isEmptyFilteredTasks = filteredTasks?.length === 0;
 
@@ -17,32 +13,17 @@ const TodoList = ({
     return <div className="todo__empty-message">There are no tasks yet</div>;
   }
 
-  // если задачи есть, но после фильтраци список задач пуст
   if (hasTatsks && isEmptyFilteredTasks) {
     return <div className="todo__empty-message">Tasks not found</div>;
   }
+
   return (
     <ul className="todo__list">
       {(filteredTasks ?? tasks).map((task) => (
-        <TodoItem
-          key={task.id}
-          ref={
-            task.id === firstIncompletedTaskId ? firstIncompleteTaskRef : null
-          }
-          onDeleteTaskButtonClick={onDeleteTaskButtonClick}
-          onToggleTaskCompleteChange={onToggleTaskCompleteChange}
-          {...task}
-        />
+        <TodoItem key={task.id} {...task} />
       ))}
     </ul>
   );
 };
 
 export default memo(TodoList);
-
-/*
-   ref={
-         task.id === firstIncompletedTaskId ? firstIncompleteTaskRef : null
-       } 
-   если id перебираемой задачи совпало с firstIncompletedTaskId, то в ref запишем firstIncompleteTaskRef 
-*/
