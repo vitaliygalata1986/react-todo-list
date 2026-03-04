@@ -9,6 +9,7 @@ const TodoInfo = () => {
     () => tasks.filter(({ isDone }) => isDone).length,
     [tasks],
   );
+  console.log('TodoInfo');
   return (
     <div className="todo__info">
       <div className="todo__total-tasks">

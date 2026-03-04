@@ -85,3 +85,15 @@ export default Todo;
 */
 
 //  AddTaskForm и SearchTaskForm оптимизировать ненужно, так как их пропсы стабильны
+
+/*
+  Как компонент получает Context
+  const { firstIncompleteTaskRef } = useContext(TaskContext);
+  useContext делает следующее:
+
+  1 - ищет ближайший TaskContext.Provider выше в дереве
+  2 - берет value
+  3 - возвращает его
+
+  
+*/
