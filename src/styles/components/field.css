@@ -37,13 +37,54 @@
     outline: none;
   }
 
-  &[type="search"] {
+  &[type='search'] {
     &:placeholder-shown {
-      padding-right: calc(var(--fieldInputPaddingX) * 2 + var(--fieldSeachInputIconSize));
+      padding-right: calc(
+        var(--fieldInputPaddingX) * 2 + var(--fieldSeachInputIconSize)
+      );
       background-image: url('../../assets/icons/icon-search_black.svg');
       background-position: calc(100% - var(--fieldInputPaddingX)) 50%;
       background-size: var(--fieldSeachInputIconSize);
       background-repeat: no-repeat;
     }
   }
+
+  &.isInvalid {
+    border-color: red;
+  }
 }
+
+.field__error {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  font-size: 12px;
+  color: red;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+/*
+  :placeholder-shown — это CSS-псевдокласс, который срабатывает на <input> / <textarea>, когда показывается placeholder.
+
+  Когда он true
+
+    Инпут считается :placeholder-shown, если одновременно:
+      - у элемента есть атрибут placeholder
+      - поле пустое (нет введённого текста)
+      - браузер реально отображает placeholder
+
+    сработает, когда инпут пустой и виден placeholder 
+      input:placeholder-shown { ... }
+
+    сработает, когда в инпуте уже есть введённый текст 
+      input:not(:placeholder-shown) { ... }
+
+
+    Если внутри .field есть инпут, и он не пустой (то есть placeholder не показан), тогда мы берём лейбл (подпись) и, например, уменьшаем его, двигаем вверх и меняем цвет.
+      &:has(.field__input:not(:placeholder-shown)) .field__label {}
+    Но изначально он заполненный - у него искусственный пробел.
+      
+*/

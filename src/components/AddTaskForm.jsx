@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { TaskContext } from '../context/TasksContext';
 import Field from './Field';
 import Button from './Button';
@@ -7,10 +7,31 @@ const AddTaskForm = () => {
   const { addTask, newTaskInputRef, newTaskTitle, setNewTaskTitle } =
     useContext(TaskContext);
 
+  const [error, setError] = useState('');
+
+  const clearNewTasktitle = newTaskTitle.trim();
+  const isNewTaskTitleEmpty = clearNewTasktitle.length === 0;
+
   const onSubmit = (e) => {
     e.preventDefault();
-    addTask();
+    // будем вызывать addTask при условии, что новая задача не пуста
+    if (!isNewTaskTitleEmpty) addTask(clearNewTasktitle);
   };
+
+  const onInput = (event) => {
+    const { value } = event.target;
+    const clearValue = value.trim();
+    // console.log('clearValue', clearValue); // 0 если вбивать n - кол. пробелов
+    // console.log('value.length', value.length); // 1 если вбить один пробел
+    const hasOnlySpaces = value.length > 0 && clearValue.length === 0;
+    // чтобы понять, что введеное значение не пустое, и содержит только пробелы нужно два условия
+    // тоесть пользователь ввел в инпут минимум один символ и в качестве значения ничего кроме пробела ничего нет
+
+    setNewTaskTitle(value);
+
+    setError(hasOnlySpaces ? 'The task cannot be empty': '');
+  };
+
   return (
     <form className="todo__form" onSubmit={onSubmit}>
       <Field
@@ -18,10 +39,13 @@ const AddTaskForm = () => {
         label="New task title"
         id="new-task"
         className="todo__field"
-        onInput={(event) => setNewTaskTitle(event.target.value)}
+        onInput={onInput}
         ref={newTaskInputRef}
+        error={error}
       />
-      <Button type="submit">Add</Button>
+      <Button isDisabled={isNewTaskTitleEmpty} type="submit">
+        Add
+      </Button>
     </form>
   );
 };
