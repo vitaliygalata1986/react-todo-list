@@ -1,3 +1,5 @@
+import styles from './RouterLink.module.scss';
+
 const RouterLink = (props) => {
   const { to, children, ...rest } = props;
 
@@ -10,7 +12,7 @@ const RouterLink = (props) => {
   };
 
   return (
-    <a href={to} onClick={handleClick} {...rest}>
+    <a className={styles.link} href={to} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

@@ -1,7 +1,7 @@
 import { memo, useContext, useMemo } from 'react';
-import { TaskContext } from '../context/TasksContext';
+import { TaskContext } from '../../context/TasksContext';
 
-const TodoInfo = () => {
+const TodoInfo = ({styles}) => {
   const { tasks, deleteAllTasks } = useContext(TaskContext); // useContext возвращает значения, которые мы передали в value провайдера
   const total = tasks.length;
   const hasTasks = total > 0;
@@ -10,14 +10,14 @@ const TodoInfo = () => {
     [tasks],
   );
   return (
-    <div className="todo__info">
-      <div className="todo__total-tasks">
+    <div className={styles.info}>
+      <div className={styles.totalTasks}>
         Done {done} from {total}
       </div>
       {hasTasks && (
         <button
           onClick={deleteAllTasks}
-          className="todo__delete-all-button"
+          className={styles.deleteAllButton}
           type="button"
         >
           Delete all

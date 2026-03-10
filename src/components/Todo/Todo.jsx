@@ -1,20 +1,21 @@
 import { useContext } from 'react';
-import { TaskContext } from '../context/TasksContext';
+import { TaskContext } from '../../context/TasksContext';
+import styles from './Todo.module.scss';
 
-import AddTaskForm from './AddTaskForm';
-import SearchTaskForm from './SearchTaskForm';
-import TodoInfo from './TodoInfo';
-import TodoList from './TodoList';
-import Button from './Button';
+import AddTaskForm from '../AddTaskForm/AddTaskForm';
+import SearchTaskForm from '../SearchTaskForm/SearchTaskForm';
+import TodoInfo from '../TodoInfo/TodoInfo';
+import TodoList from '../TodoList/TodoList';
+import Button from '../Button/Button';
 
 const Todo = () => {
   const { firstIncompleteTaskRef } = useContext(TaskContext);
   return (
-    <div className="todo">
-      <h1 className="todo__title">To Do List</h1>
-      <AddTaskForm />
-      <SearchTaskForm />
-      <TodoInfo />
+    <div className={styles.todo}>
+      <h1 className={styles.title}>To Do List</h1>
+      <AddTaskForm styles={styles} />
+      <SearchTaskForm styles={styles} />
+      <TodoInfo styles={styles} />
       <Button
         onClick={() =>
           firstIncompleteTaskRef.current?.scrollIntoView({
@@ -25,7 +26,7 @@ const Todo = () => {
       >
         Show first incomplete task
       </Button>
-      <TodoList />
+      <TodoList styles={styles} />
     </div>
   );
 };
