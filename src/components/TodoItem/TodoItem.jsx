@@ -1,4 +1,4 @@
-import { memo, useContext } from 'react';
+import { memo, useContext, useRef } from 'react';
 import { TaskContext } from '../../context/TasksContext';
 import RouterLink from '../RouterLink/RouterLink';
 import styles from './TodoItem.module.scss';
@@ -11,11 +11,17 @@ const TodoItem = (props) => {
     firstIncompleteTaskId,
     deleteTask,
     toggleTaskComplete,
+    disappearingTaskId,
+    appearingTaskId,
   } = useContext(TaskContext);
+
+  // console.log(disappearingTaskId);
 
   return (
     <li
-      className={styles.todoItem}
+      className={`${styles.todoItem}  
+      ${disappearingTaskId === id ? styles.isDisappearing : ''} 
+      ${appearingTaskId === id ? styles.isAppearing : ''}`}
       ref={id === firstIncompleteTaskId ? firstIncompleteTaskRef : null}
     >
       <input
@@ -60,3 +66,59 @@ const TodoItem = (props) => {
 };
 
 export default memo(TodoItem);
+
+/*
+  useCombinedRefs нужен, когда одному и тому же DOM-элементу надо передать несколько ref одновременно.
+  То есть у одного li сразу 2 рефа: 
+    firstIncompleteTaskRef — чтобы где-то снаружи получить доступ к первой невыполненной задаче 
+    animationRef — чтобы локально внутри компонента работать с этим же li, например для анимации
+  
+    useCombinedRefs() принимает сколько угодно рефов: useCombinedRefs(ref1, ref2, ref3)
+    и возвращает одну callback-функцию, которую React вызывает, когда привязывает DOM-элемент к ref.
+    То есть вот это:
+    ref={combinedRef}
+    по сути означает:
+    ref={(node) => {
+      // React сюда передаст li
+    }}
+
+    Что такое node
+    Когда <li> смонтировался, React вызовет:
+    combinedRef(liElement)
+    Где liElement — это реальный DOM-элемент <li>.
+    Когда элемент удаляется, React обычно вызовет:
+    combinedRef(null) чтобы очистить refs.
+
+    Внутри:
+    refs.forEach((ref) => {
+      if (!ref) return;
+
+      if (typeof ref === 'function') {
+        ref(node);
+      } else {
+        ref.current = node;
+      }
+    });
+    Значит будет:
+    firstIncompleteTaskRef.current = liNode;
+    animationRef.current = liNode;
+    И оба рефа теперь указывают на один и тот же <li>.
+
+    Если это не первая невыполненная задача, то в хук придёт:
+    useCombinedRefs(null, animationRef)
+    Тогда цикл просто пропустит null, и останется только:
+
+    animationRef.current = liNode;
+
+
+    useRef(null)
+      ↓
+      animationRef.current === null
+      ↓
+      React смонтировал <li>
+      ↓
+      combinedRef(liNode)
+      ↓
+      animationRef.current === liNode
+
+*/
