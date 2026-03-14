@@ -1,7 +1,7 @@
 import { memo, useContext, useMemo } from 'react';
 import { TasksContext } from '@/entities/todo';
 
-const TodoInfo = ({styles}) => {
+const TodoInfo = ({ styles }) => {
   const { tasks, deleteAllTasks } = useContext(TasksContext); // useContext возвращает значения, которые мы передали в value провайдера
   const total = tasks.length;
   const hasTasks = total > 0;
