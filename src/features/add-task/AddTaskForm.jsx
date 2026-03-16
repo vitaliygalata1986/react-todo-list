@@ -3,11 +3,12 @@ import { TasksContext } from '@/entities/todo';
 import Field from '@/shared/ui/Field';
 import Button from '@/shared/ui/Button';
 
-const AddTaskForm = ({styles}) => {
-  const { addTask, newTaskInputRef, newTaskTitle, setNewTaskTitle } =
-    useContext(TasksContext);
+const AddTaskForm = ({ styles }) => {
+  const { addTask, newTaskInputRef } = useContext(TasksContext);
 
   const [error, setError] = useState('');
+
+  const [newTaskTitle, setNewTaskTitle] = useState('');
 
   const clearNewTasktitle = newTaskTitle.trim();
   const isNewTaskTitleEmpty = clearNewTasktitle.length === 0;
@@ -15,7 +16,8 @@ const AddTaskForm = ({styles}) => {
   const onSubmit = (e) => {
     e.preventDefault();
     // будем вызывать addTask при условии, что новая задача не пуста
-    if (!isNewTaskTitleEmpty) addTask(clearNewTasktitle);
+    if (!isNewTaskTitleEmpty)
+      addTask(clearNewTasktitle, () => setNewTaskTitle(''));
   };
 
   const onInput = (event) => {

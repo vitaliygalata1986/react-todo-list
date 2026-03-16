@@ -40,8 +40,6 @@ const tasksReducer = (state, action) => {
 const useTasks = () => {
   const [tasks, dispatch] = useReducer(tasksReducer, []); // tasksReducer - ссылка на фукцию редюсер с которой будет работать хук
 
-  const [newTaskTitle, setNewTaskTitle] = useState('');
-
   const [searchQuery, setSearchQuery] = useState('');
 
   const [disappearingTaskId, setDisappearingTaskId] = useState(null); // для id-шка исчезающей задачи
@@ -74,7 +72,7 @@ const useTasks = () => {
       .then(() => dispatch({ type: 'TOGGLE_COMPLETE', id: taskId, isDone }));
   }, []);
 
-  const addTask = useCallback((title) => {
+  const addTask = useCallback((title, callbackAfterAdding) => {
     const newTask = {
       // id передавать ненужно, так как сам сервер его добавлеят
       title,
@@ -86,7 +84,7 @@ const useTasks = () => {
       .then((response) => response.json())
       .then((addedTask) => {
         dispatch({ type: 'ADD', task: addedTask });
-        setNewTaskTitle('');
+        callbackAfterAdding();
         setSearchQuery('');
         newTaskInputRef.current.focus();
         setAppearingTaskId(addedTask.id);
@@ -120,8 +118,6 @@ const useTasks = () => {
     deleteTask,
     deleteAllTasks,
     toggleTaskComplete,
-    newTaskTitle,
-    setNewTaskTitle,
     searchQuery,
     setSearchQuery,
     newTaskInputRef,
