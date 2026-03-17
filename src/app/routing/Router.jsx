@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
+import { BASE_URL } from '@/shared/constants';
+
+const getCurrentPath = () => {
+  const pathname = window.location.pathname;
+
+  return pathname.startsWith(BASE_URL)
+    ? pathname.slice(BASE_URL.length - 1) || '/'
+    : pathname;
+};
 
 export const useRoute = () => {
-  const [path, setPath] = useState(window.location.pathname); // чтобы хранить текущий путь
+  const [path, setPath] = useState(getCurrentPath()); // чтобы хранить текущий путь
 
   useEffect(() => {
     const onLocationChange = () => {
-      setPath(window.location.pathname);
+      setPath(getCurrentPath());
     };
 
     window.addEventListener('popstate', onLocationChange); // следим за изменением URL через историю браузера и обновляем path

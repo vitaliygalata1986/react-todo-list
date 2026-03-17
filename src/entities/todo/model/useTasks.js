@@ -81,8 +81,7 @@ const useTasks = () => {
 
     tasksAPI
       .add(newTask)
-      .then((response) => response.json())
-      .then((addedTask) => {
+       .then((addedTask) => {
         dispatch({ type: 'ADD', task: addedTask });
         callbackAfterAdding();
         setSearchQuery('');

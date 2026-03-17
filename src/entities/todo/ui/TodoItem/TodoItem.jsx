@@ -21,6 +21,7 @@ const TodoItem = (props) => {
   // console.log(disappearingTaskId);
 
   const highlightedTitle = highlightCaseInsensitive(title, searchQuery);
+
   // применили регулярное выражение, чтобы был регистронез. поиск
   // заменим searchQuery на `<mark>${searchQuery}</mark>`
   // '$&' означает: вставь найденное совпадение целиком
@@ -50,7 +51,7 @@ const TodoItem = (props) => {
       <label className={`${styles.label} visually-hidden`} htmlFor={id}>
         {title}
       </label>
-      <RouterLink to={`/tasks/${id}`} aria-label="Task detail page">
+      <RouterLink to={`tasks/${id}`} aria-label="Task detail page">
         <span dangerouslySetInnerHTML={{ __html: highlightedTitle }} />
       </RouterLink>
       <button

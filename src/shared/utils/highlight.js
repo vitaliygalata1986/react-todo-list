@@ -8,6 +8,7 @@ const escapeHTML = (unsafeString) => {
     .replaceAll(/'/g, '&#39;');
 };
 
+
 const escapeRegExp = (unsafeString) => {
   return unsafeString.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
